@@ -13,7 +13,8 @@
 #### Projeto funcionando
 
 Deploy: [Projeto React-Election](https://react-election-gpcsantos.netlify.app)
-Bac-end:
+
+Back-end:
 
 - <https://react-election-backend-gpcsantos.glitch.me/cities>
 - <https://react-election-backend-gpcsantos.glitch.me/candidates>
