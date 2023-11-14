@@ -13,6 +13,9 @@ import Select from "../components/Select";
 import CityDataElection from "../components/CityDataElection";
 import CityCandidates from "../components/CityCandidates";
 
+import Error from "../components/Error";
+import Loading from "../components/Loading";
+
 export default function ElectionPage() {
   // back-end
 
@@ -31,6 +34,9 @@ export default function ElectionPage() {
   // selectedCity, allElection
   const [cityCantidates, setCityCandidates] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   // busca, prepara os dados do back-em para variáveis de memória
   useEffect(() => {
     async function getAllCities() {
@@ -42,7 +48,8 @@ export default function ElectionPage() {
         setAllCities(backEndAllCities); // cidades ordenadas por nome
         setSelectedCity(backEndAllCities[0]);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
+        setError(error.message);
       }
     }
 
@@ -51,7 +58,8 @@ export default function ElectionPage() {
         const backEndAllCandidates = await apiGetCandidates();
         setAllCandidatess(backEndAllCandidates); // lista de candidatos, sem ordenação
       } catch (error) {
-        console.log(error);
+        // console.log(error);
+        setError(error.message);
       }
     }
 
@@ -67,9 +75,14 @@ export default function ElectionPage() {
         // concorreram na cidade selecionada
         setAllElection(backEndAllElection);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
+        setError(error.message);
       }
     }
+
+    setTimeout(() => {
+      setLoading(false);
+    }, 1200);
 
     getAllCities();
     getAllCandidates();
@@ -93,13 +106,19 @@ export default function ElectionPage() {
     setSelectedCity(changeCity);
   }
 
-  return (
-    <div>
-      <Header>
-        <h1>React Election</h1>
-      </Header>
+  let mainJsx = (
+    <div className="flex flex-row justify-center">
+      <Loading />
+    </div>
+  );
 
-      <Main>
+  if (error) {
+    mainJsx = <Error>{error}</Error>;
+  }
+
+  if (!loading && !error) {
+    mainJsx = (
+      <>
         <div className="flex flex-col items-center mb-5">
           <div className="my-3">Escolha o município</div>
           <Select
@@ -122,7 +141,16 @@ export default function ElectionPage() {
             </CityCandidates>
           </div>
         </div>
-      </Main>
+      </>
+    );
+  }
+
+  return (
+    <div>
+      <Header>
+        <h1>React Election</h1>
+      </Header>
+      <Main>{mainJsx}</Main>
     </div>
   );
 }
